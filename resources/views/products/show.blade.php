@@ -72,36 +72,61 @@
             });
 
              // 监听收藏按钮的点击事件
-    $('.btn-favor').click(function () {
-      axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
-        .then(function () {
-          swal('操作成功', '', 'success')
-          .then(function () {  // 这里加了一个 then() 方法
-              location.reload();
-            });
-        }, function(error) {
-          if (error.response && error.response.status === 401) {
-            swal('请先登录', '', 'error');
-          }  else if (error.response && error.response.data.msg) {
-            swal(error.response.data.msg, '', 'error');
-          }  else {
-            swal('系统错误', '', 'error');
-          }
-        });
-    });
-
-    $('.btn-disfavor').click(function () {
-      axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
-        .then(function () {
-          swal('操作成功', '', 'success')
+        $('.btn-favor').click(function () {
+          axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
             .then(function () {
-              location.reload();
+              swal('操作成功', '', 'success')
+              .then(function () {  // 这里加了一个 then() 方法
+                  location.reload();
+                });
+            }, function(error) {
+              if (error.response && error.response.status === 401) {
+                swal('请先登录', '', 'error');
+              }  else if (error.response && error.response.data.msg) {
+                swal(error.response.data.msg, '', 'error');
+              }  else {
+                swal('系统错误', '', 'error');
+              }
             });
         });
-    });
 
-
+        $('.btn-disfavor').click(function () {
+          axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
+            .then(function () {
+              swal('操作成功', '', 'success')
+                .then(function () {
+                  location.reload();
+                });
+            });
         });
+
+        //加入购物车
+        $('.btn-add-to-cart').click(function (){
+          axios.post('{{ route('cart.add') }}', {
+            sku_id: $('label.active input[name=skus').val(),
+            amount: $('.cart_amount input').val(),
+          })
+
+          .then(function () {
+            swal('加入购物车成功', '', 'success');
+          }, function (error) {
+            if (error.response.status == 401) {
+              swal('请先登陆', '', 'error');
+            } else if (error.response.status === 422) {
+              var html = '<div>';
+              _.each(error.response.data.errors, function(errors) {
+                _.each(errors, function (error) {
+                  html += error+'<br>';
+                })
+              });
+              html += '<div>';
+              swal({content: $(html)[0], icon: 'error'})
+            } else {
+              swal('系统错误', '', 'error');
+            }
+          })
+        });
+      });
     </script>
 @endsection
 @endsection

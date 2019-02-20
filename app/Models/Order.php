@@ -63,7 +63,7 @@ class Order extends Model
     {
         parent::boot();
         //监听模型创建事件, 在写入数据可之前触发
-        static::createing(function ($model) {
+        static::creating(function ($model) {
             //如果模型的 no 字段为空
             if (!$model->no) {
                 //调用 findAvailableNo 生成订单流水号
@@ -87,7 +87,7 @@ class Order extends Model
 
     public static function findAvailableNo()
     {
-        $prefix = data('YmdHis');
+        $prefix = date('YmdHis');
         for ($i=0; $i < 10; $i++) {
             $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             if (!static::query()->where('no', $no)->exists()) {

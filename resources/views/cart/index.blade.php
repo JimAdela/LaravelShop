@@ -96,10 +96,10 @@
                     title: "确认要将该商品移除? ",
                     icon: "warning",
                     buttons: ['取消', '确定'],
-                    dangerMdoe: true,
+                    dangerMode: true,
                 })
                 .then(function(willDelete) {
-                    if (willDelete) {
+                    if (!willDelete) {
                         return;
                     }
                     axios.delete('/cart/' + id)

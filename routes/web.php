@@ -36,14 +36,12 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('products/favorites','ProductsController@favorites')->name('products.favorites');
 		Route::post('cart', 'CartController@add')->name('cart.add');
 
+		Route::delete('cart/{sku}', 'CartController@remove')->name('cart.remove');
+
+		Route::get('cart', 'CartController@index')->name('cart.index');
+
+		Route::post('orders', 'OrdersController@store')->name('orders.store');
 	});
-
-	Route::get('cart', 'CartController@index')->name('cart.index');
-	
-	Route::delete('cart/{sku}', 'CartController@remove')->name('cart.remove');
-
-	Route::post('orders', 'OrdersController@store')->name('orders.store');
-
 });
 
 Route::redirect('/', '/products')->name('root');

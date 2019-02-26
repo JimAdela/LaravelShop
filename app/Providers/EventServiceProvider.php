@@ -6,6 +6,9 @@ use App\Listeners\RegisteredListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Events\OrderPaid;
+use App\Listeners\UpdateProductSoldCount;
+use App\Listeners\SendOrderPaidMail;
 
 class EventServiceProvider extends ServiceProvider {
 	/**
@@ -16,6 +19,8 @@ class EventServiceProvider extends ServiceProvider {
 	protected $listen = [
 		Registered::class => [
 			RegisteredListener::class,
+			UpdateProductSoldCount::class,
+			SendOrderPaidMail::class,
 		],
 	];
 

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -9,6 +10,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use App\Exceptions\InvalidRequestException;
 
 class OrdersController extends Controller
 {
@@ -166,5 +168,29 @@ class OrdersController extends Controller
         $form->textarea('extra', 'Extra');
 
         return $form;
+    }
+
+    public function ship(Order $order, Request $request)
+    {
+        //判断当前订单是否u已支付
+        if (!$order->paid_at) {
+            throw new InvalidRequestException('该订单未付款');
+        }
+        //判断当前订单发货状态是否未发货
+        if ($order->ship_status !== Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException("该订单已发货");
+        }
+        $data = $this->validate($request, [
+            'express_company' => ['required'],
+            'express_no'      => ['required'],
+        ],[], [
+            'express_company' => '物流公司',
+            'express_no'      => '物流单号',
+        ]);
+        $order->update([
+            'ship_status' => Order::SHIP_STATUS_DELIVERED,
+            'ship_data' => $data,
+        ]);
+        return redirect()->back();
     }
 }
